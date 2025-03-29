@@ -54,7 +54,7 @@ export default function Pokemons({ pokemons, loading, error, paginator, handleNe
         </div>
 
         {
-            !loading && 
+            pokemons.length > 0 && paginator &&
 
             <div className="mt-8">
                 <ul className="flex items-center justify-center text-lg">

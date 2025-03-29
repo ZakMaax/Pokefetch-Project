@@ -12,9 +12,22 @@ function App() {
   const [error, setError] = useState('')
   const [input, setInput] = useState('')
   const [paginator, setPaginator] = useState({next: null, previous: null})
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pokemonDetails, setPokemonDetails] = useState({
+    name: "",
+    id: "",
+    types: [],
+    weight: 0,
+    height: 0,
+    abilities: [],
+    stats: {},
+  })
 
+   
+  const dialog = useRef(null)
   const scrollPokemonsIntoView = useRef(null)
-  
+
+  // Fetch Pokemons on first render
    useEffect(() => {
     const fetchPokemons = async () => {
         setLoading(true)
@@ -40,6 +53,8 @@ function App() {
    }, [])
 
 
+   // handle pokemon filtering logic
+
    useEffect(() => {
     const filtered = pokemons.filter(pokemon => {
       const pokemonId = pokemon.url.split('/')[6]
@@ -50,7 +65,7 @@ function App() {
       setFilteredPokemons(filtered)
    }, [input, pokemons])
 
-
+// handle pagination next functionality
   async function handleNext() {
     if(paginator.next){
       async function fetchPokemons(url) {
@@ -72,6 +87,8 @@ function App() {
       await fetchPokemons(paginator.next)
     }
    }
+
+   // handle pagination previous functionality
 
    async function handlePrevious() {
     if(paginator.previous){
@@ -96,6 +113,8 @@ function App() {
    }
 
 
+   // when pagination buttons are clicked scroll to the top 
+
    if(pokemons && scrollPokemonsIntoView.current){
     scrollPokemonsIntoView.current.scrollIntoView({
         behavior: "smooth",
@@ -104,18 +123,7 @@ function App() {
 }
 
 
-const [isModalOpen, setIsModalOpen] = useState(false)
-    const dialog = useRef(null)
-
-    const [pokemonDetails, setPokemonDetails] = useState({
-        name: "",
-        id: "",
-        types: [],
-        weight: 0,
-        height: 0,
-        abilities: [],
-        stats: {},
-      })
+// get and set the clicked pokemon's details
 
    async function getPokemonDetails(id){
         try {
@@ -146,17 +154,40 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         }
    }
 
+   // handle close modal functionality
+
    function closeModal(){
     setIsModalOpen(false)
     dialog.current.close()
    }
 
+
+   // reset app when the logo is clicked
+
+   const resetApp = async () => {
+    setLoading(true)
+    setError('')
+    setInput('')
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20`)
+        const data = await res.json()
+        const paginaton = {next: data.next, previous: data.previous}
+        setPaginator(paginaton)
+        setPokemons(data.results)
+    } catch (error) {
+        setError('Error Fetching Pokemons, Please try again later!')
+        console.log(error)
+    }
+    finally{
+        setLoading(false)
+    }
+}
   
 
   return (
     <div className="bg-emerald-400 p-6 min-h-screen">
       <div className="flex flex-col md:flex-row gap-4 md:gap-0 md:justify-between md:items-center mb-12">
-      <Header ref={scrollPokemonsIntoView} />
+      <Header ref={scrollPokemonsIntoView} resetApp={resetApp} />
       <Filter input={input} setInput={setInput}/>
       </div>
 

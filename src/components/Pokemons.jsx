@@ -5,7 +5,7 @@ export default function Pokemons({ pokemons, loading, error, paginator, handleNe
     const pokemonId = pokemon.url.split('/')[6]
     const imageURL = `https://raw.githubusercontent.com/pokeapi/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
     return(
-        <a onClick={() => getPokemonDetails(pokemonId)} key={pokemonId} className="cursor-pointer flex flex-col items-center justify-center p-2 text-gray-700 max-w-xs border border-red-400 rounded-xl shadow-2xl hover:scale-105 hover:border-2 transition-all duration-200">
+        <a onClick={() => getPokemonDetails(pokemonId)} key={pokemonId} className="cursor-pointer flex flex-col items-center justify-center p-2 text-gray-700 max-w-xs border border-red-400 rounded-xl shadow-2xl hover:scale-105 hover:border-2 transition-all duration-400">
             <p className='font-bold text-md text-right'>{pokemonId}</p>
             <img src={imageURL} alt={pokemon.name} className="object-contain w-36 h-36 md:w-60 md:h-60"/>
             <p className='font-bold text-lg capitalize'>{pokemon.name}</p>
